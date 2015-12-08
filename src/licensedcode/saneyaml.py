@@ -135,7 +135,7 @@ class SaneDumper(SafeDumper):
     """
     Ensure that lists items are always indented.
     """
-    def increase_indent(self, flow=False, indentless=False):  # @UnusedVariable
+    def increase_indent(self, flow=False, indentless=False):
         return super(SaneDumper, self).increase_indent(flow, indentless=False)
 
 
@@ -148,7 +148,7 @@ def ordered_dumper(dumper, data):
 SaneDumper.add_representer(OrderedDict, ordered_dumper)
 
 
-def null_dumper(dumper, value):  # @UnusedVariable
+def null_dumper(dumper, value):
     """
     Always dump nulls as empty string.
     """
@@ -182,7 +182,7 @@ def string_dumper(dumper, value, _tag=u'tag:yaml.org,2002:str'):
 #     colon_space = ': ' in value
 #     hash_space = '# ' in value
 
-    if multilines:# or colon_space or hash_space or (single_quote and double_quote) or double_quote:
+    if multilines:  # or colon_space or hash_space or (single_quote and double_quote) or double_quote:
         style = verbatim_style
     elif long_lines:
         style = folded_style
