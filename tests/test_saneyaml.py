@@ -30,7 +30,7 @@ import os
 
 from commoncode.testcase import FileBasedTesting
 
-from commoncode import saneyaml
+import saneyaml
 
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
