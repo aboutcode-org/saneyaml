@@ -1,0 +1,19 @@
+graft src
+graft tests
+
+prune src/saneyaml.egg-info
+
+include CHANGELOG.rst
+include README.rst
+include CONTRIBUTING.rst
+include apache-2.0.LICENSE
+include NOTICE
+include MANIFEST.in
+include setup.py
+include setup.cfg
+include .gitignore
+include .travis.yml
+include appveyor.yml
+include saneyaml.ABOUT
+
+global-exclude *.py[co] __pycache__ *.*~

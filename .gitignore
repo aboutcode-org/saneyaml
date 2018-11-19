@@ -57,13 +57,5 @@ docs/_build
 *.bak
 /.cache/
 
-# test files that should not be ignored
-!/tests/typecode/data/contenttype/compiled/java/*
-!/tests/typecode/data/contenttype/compiled/python/*
-!/tests/typecode/data/contenttype/compiled/flash/*
-!/tests/typecode/data/contenttype/compiled/linux/*
-!/tests/typecode/data/contenttype/compiled/win/*
-!/tests/typecode/data/contenttype/package/*
-
 # pyenv
 /.python-version

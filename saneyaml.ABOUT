@@ -1,0 +1,19 @@
+about_resource: .
+name: saneyaml
+
+description: |
+
+homepage_url: http://www.nexb.com/community.html
+
+license_expression: apache-2.0
+licenses:
+    - key: apache-2.0
+      name: Apache 2.0
+      file: apache-2.0.LICENSE
+
+copyright: Copyright (c) 2018 nexB Inc. and others
+
+notice_file: NOTICE
+
+vcs_tool: git
+vcs_repository: https://github.com/nexB/saneyaml.git
