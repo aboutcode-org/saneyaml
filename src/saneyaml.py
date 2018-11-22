@@ -122,15 +122,13 @@ class BaseSaneLoader(SafeLoader):
                     'Duplicate key in YAML source: {}'.format(key))
             omap[key] = value
 
-# Load most types as strings : nulls, ints, (such as in version
-# 01) floats (such version 2.20) and timestamps conversion (in
-# versions too) are all loaded as plain strings.
-
+# Load most types as strings : nulls, ints, (such as in version 01) floats (such
+# as version 2.20) and timestamps conversion (in versions too), booleans are all
+# loaded as plain strings.
 # This avoid unwanted type conversions for unquoted strings and the resulting
 # content damaging. This overrides the implicit resolvers. Callers must handle
 # type conversion explicitly from unicode to other types in the loaded objects.
-# NOTE: we are still using the built-in loader for booleans. It will recognize
-# yes/no as a boolean.
+
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:str', BaseSaneLoader.string_loader)
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:null', BaseSaneLoader.string_loader)
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:boolean', BaseSaneLoader.string_loader)
@@ -159,6 +157,7 @@ class DupeKeySaneLoader(BaseSaneLoader):
     pass
 
 
+# Always load mapping as ordered mappings
 dupe_checkding_ordered_loader = partial(BaseSaneLoader.ordered_loader, check_dupe=True)
 DupeKeySaneLoader.add_constructor('tag:yaml.org,2002:map', dupe_checkding_ordered_loader)
 DupeKeySaneLoader.add_constructor('tag:yaml.org,2002:omap', dupe_checkding_ordered_loader)
