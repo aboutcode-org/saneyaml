@@ -50,6 +50,6 @@ setup(
         'yaml', 'block', 'flow', 'readable',
     ],
     install_requires=[
-        'PyYAML >= 3.11, <= 3.13',
+        'PyYAML',
     ],
 )
