@@ -17,7 +17,7 @@ from setuptools import setup
 
 setup(
     name='saneyaml',
-    version='0.2dev',
+    version='0.3',
     license='Apache-2.0',
     description='Dump readable YAML and load safely any YAML preserving '
         'ordering and avoiding surprises of type conversions. '
@@ -34,7 +34,7 @@ setup(
     zip_safe=False,
     platforms='any',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',

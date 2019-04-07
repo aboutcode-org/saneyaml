@@ -18,13 +18,12 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-
+from collections import OrderedDict
 from functools import partial
 import sys
 
 import yaml
 from yaml.error import YAMLError
-from pip._vendor.distlib.compat import OrderedDict
 from yaml.emitter import Emitter
 from yaml.resolver import Resolver
 from yaml.representer import SafeRepresenter
@@ -285,8 +284,7 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
 
 SaneDumper.add_representer(int, SaneDumper.string_dumper)
 SaneDumper.add_representer(odict, SaneDumper.ordered_dumper)
-if not OLD_PY:
-    SaneDumper.add_representer(OrderedDict, SaneDumper.ordered_dumper)
+SaneDumper.add_representer(OrderedDict, SaneDumper.ordered_dumper)
 SaneDumper.add_representer(type(None), SaneDumper.null_dumper)
 SaneDumper.add_representer(bool, SaneDumper.boolean_dumper)
 SaneDumper.add_representer(bytes, SaneDumper.string_dumper)
