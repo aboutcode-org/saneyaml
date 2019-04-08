@@ -20,6 +20,7 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 from functools import partial
+import re
 import sys
 
 import yaml
@@ -127,7 +128,8 @@ class BaseSaneLoader(SafeLoader):
 # This avoid unwanted type conversions for unquoted strings and the resulting
 # content damaging. This overrides the implicit resolvers. Callers must handle
 # type conversion explicitly from unicode to other types in the loaded objects.
-
+# NOTE: we are still using the built-in loader for booleans. It will recognize
+# yes/no as a boolean.
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:str', BaseSaneLoader.string_loader)
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:null', BaseSaneLoader.string_loader)
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:boolean', BaseSaneLoader.string_loader)
@@ -166,6 +168,8 @@ DupeKeySaneLoader.add_constructor('tag:yaml.org,2002:omap', dupe_checkding_order
 # Dumping
 ###############################################################################
 
+WIDTH = 90
+
 def dump(obj, indent=2, encoding=None):
     """
     Return a safe and sane YAML string representation from `obj`.
@@ -187,7 +191,7 @@ def dump(obj, indent=2, encoding=None):
         # anything above 2 will yield weird vertical indents on lists and maps
         indent=indent,
         # make this 80ish
-        width=90,
+        width=WIDTH,
         # posix LF
         line_break='\n',
         # no --- and ...
@@ -212,7 +216,7 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
             canonical=None, indent=None, width=None,
             allow_unicode=None, line_break=None,
             encoding=None, explicit_start=None, explicit_end=None,
-            version=None, tags=None):
+            version=None, tags=None, sort_keys=False, **kwargs):
         IndentingEmitter.__init__(self, stream, canonical=canonical,
                 indent=indent, width=width,
                 allow_unicode=allow_unicode, line_break=line_break)
@@ -245,7 +249,7 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
         """
         Always dump nulls as empty string.
         """
-        return self.represent_scalar('tag:yaml.org,2002:null', '')
+        return self.represent_scalar('tag:yaml.org,2002:str', '', style=None)
 
     def string_dumper(self, value):
         """
@@ -254,20 +258,50 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
         """
         tag = 'tag:yaml.org,2002:str'
         style = None
+
+        if value is None:
+            return ''
+
+        if isinstance(value, bool):
+            value = 'yes' if value else 'no'
+            style = ''
+
         if isinstance(value, float):
             style = "'"
 
+        if isinstance(value, int):
+            value = unicode(value)
+            style = ''
+
         if isinstance(value, bytes):
             value = value.decode('utf-8')
+        elif isinstance(value, int):
+            value = unicode(value)
         elif not isinstance(value, unicode):
             value = repr(value)
 
         # do not quote integer strings
-        if value.isdigit() and unicode(int(value)) == value:
-            style = None
-            tag = 'tag:yaml.org,2002:int'
+        if value.isdigit():
+            if value.lstrip('0') == value:
+                style = ''
+            else:
+                # things such as 012 needs to be quoted
+                style = "'"
 
-        if '\n' in value:
+        # quote things that could be mistakenly loaded as date
+        if is_iso_date(value):
+            style = "'"
+
+        # quote things that could be mistakenly loaded as float such as version numbers
+        if value !='.' and len(value.split('.')) == 2 and all(c in '0123456789.' for c in value):
+            style = "'"
+
+        elif value == 'null':
+            style = "'"
+
+        # if '\n' in value or len(value) > WIDTH:
+            # literal_style for multilines or long
+        elif '\n' in value:
             # literal_style for multilines
             style = '|'
 
@@ -282,12 +316,31 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
         return self.represent_scalar('tag:yaml.org,2002:bool', value, style=None)
 
 
+def is_float(s):
+    """
+    Return True if this is a float with trailing zeroes such as `1.20`
+    """
+    try:
+        float(s)
+        return s.startswith('0') or s.endswith('0')
+    except:
+        return False
+
+
+# Return True if s is an iso date such as `2019-12-12`
+is_iso_date = re.compile(r'19|20[0-9]{2}-[0-1][0-9]-[0-3]?[1-9]').match
+
+
 SaneDumper.add_representer(int, SaneDumper.string_dumper)
 SaneDumper.add_representer(odict, SaneDumper.ordered_dumper)
 SaneDumper.add_representer(OrderedDict, SaneDumper.ordered_dumper)
-SaneDumper.add_representer(type(None), SaneDumper.null_dumper)
-SaneDumper.add_representer(bool, SaneDumper.boolean_dumper)
+SaneDumper.add_representer(type(None), SaneDumper.string_dumper)
+# SaneDumper.add_representer(type(None), SaneDumper.null_dumper)
+SaneDumper.add_representer(bool, SaneDumper.string_dumper)
 SaneDumper.add_representer(bytes, SaneDumper.string_dumper)
 SaneDumper.add_representer(str, SaneDumper.string_dumper)
 SaneDumper.add_representer(unicode, SaneDumper.string_dumper)
 SaneDumper.add_representer(float, SaneDumper.string_dumper)
+
+SaneDumper.yaml_implicit_resolvers = {}
+SaneDumper.yaml_path_resolvers = {}
