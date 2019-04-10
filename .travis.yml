@@ -3,13 +3,11 @@ language: python
 python:
   - "2.7"
   - "3.6"
-  - "3.7"
 
 script:
     - pip install pyyaml==3.13
     - pip install -r requirements_dev.txt
-    - bin/py.test -vvs tests
+    - py.test -vvs tests
     - pip uninstall -y pyyaml
     - pip install pyyaml
-    - pip install -r requirements_dev.txt
     - bin/py.test -vvs tests
