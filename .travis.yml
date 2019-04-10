@@ -10,4 +10,4 @@ script:
     - py.test -vvs tests
     - pip uninstall -y pyyaml
     - pip install pyyaml
-    - bin/py.test -vvs tests
+    - py.test -vvs tests
