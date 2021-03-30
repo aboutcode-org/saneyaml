@@ -3,7 +3,7 @@ version: '{build}'
 build: off
 
 test_script:
-    - pip install pyyaml==3.13
+    - pip install pyyaml
     - pip install -r requirements_dev.txt
 # test also on latest version
     - py.test -vvs tests

@@ -5,7 +5,7 @@ python:
   - "3.6"
 
 script:
-    - pip install pyyaml==3.13
+    - pip install pyyaml
     - pip install -r requirements_dev.txt
     - py.test -vvs tests
     - pip uninstall -y pyyaml

@@ -10,7 +10,7 @@ preserving ordering and avoiding surprises of type conversions by loading
 everything except booleans as strings.
 Optionally you can check for duplicated map keys when loading YAML.
 
-Works with Python 2 and 3. Requires PyYAML.
+Works with Python 3. Requires PyYAML 5.x.
 
 License: apache-2.0
 Homepage_url: https://github.com/nexB/saneyaml
