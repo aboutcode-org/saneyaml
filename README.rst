@@ -12,33 +12,33 @@ Optionally you can check for duplicated map keys when loading YAML.
 
 Works with Python 3. Requires PyYAML 5.x.
 
-License: apache-2.0
-Homepage_url: https://github.com/nexB/saneyaml
+license: apache-2.0
+homepage_url: https://github.com/nexB/saneyaml
 
 Usage::
 
-pip install saneyaml
-
->>> from  saneyaml import load as l
->>> from  saneyaml import dump as d
->>> a=l('''version: 3.0.0.dev6
-... 
-... description: |
-...     AboutCode Toolkit is a tool to process ABOUT files. An ABOUT file
-...     provides a way to document a software component.
-... ''')
->>> a
-OrderedDict([
-    (u'version', u'3.0.0.dev6'), 
-    (u'description', u'AboutCode Toolkit is a tool to process ABOUT files. '
-    'An ABOUT file\nprovides a way to document a software component.\n')])
-
->>> pprint(a.items())
-[(u'version', u'3.0.0.dev6'),
- (u'description',
-  u'AboutCode Toolkit is a tool to process ABOUT files. An ABOUT file\nprovides a way to document a software component.\n')]
->>> print(d(a))
-version: 3.0.0.dev6
-description: |
-  AboutCode Toolkit is a tool to process ABOUT files. An ABOUT file
-  provides a way to document a software component.
+    pip install saneyaml
+    
+    >>> from  saneyaml import load
+    >>> from  saneyaml import dump
+    >>> a=load('''version: 3.0.0.dev6
+    ... 
+    ... description: |
+    ...     AboutCode Toolkit is a tool to process ABOUT files. An ABOUT file
+    ...     provides a way to document a software component.
+    ... ''')
+    >>> a
+    dict([
+        (u'version', u'3.0.0.dev6'), 
+        (u'description', u'AboutCode Toolkit is a tool to process ABOUT files. '
+        'An ABOUT file\nprovides a way to document a software component.\n')])
+    
+    >>> pprint(a.items())
+    [(u'version', u'3.0.0.dev6'),
+     (u'description',
+      u'AboutCode Toolkit is a tool to process ABOUT files. An ABOUT file\nprovides a way to document a software component.\n')]
+    >>> print(dump(a))
+    version: 3.0.0.dev6
+    description: |
+      AboutCode Toolkit is a tool to process ABOUT files. An ABOUT file
+      provides a way to document a software component.
