@@ -1,24 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 #
-# Copyright (c) 2018 nexB Inc. and others. All rights reserved.
-# http://nexb.com and https://github.com/nexB/saneyaml/
+# Copyright (c) nexB Inc. and others. All rights reserved.
+# ScanCode is a trademark of nexB Inc.
+# SPDX-License-Identifier: Apache-2.0
+# See http://www.apache.org/licenses/LICENSE-2.0 for the license text.
+# See https://github.com/nexB/saneyaml/ for support or download.
+# See https://aboutcode.org for more information about nexB OSS projects.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#     http://www.apache.org/licenses/LICENSE-2.0
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
-from collections import OrderedDict
 import io
 import json
 import os
@@ -26,12 +16,6 @@ import re
 from unittest.case import TestCase
 
 import saneyaml
-
-try:
-    unicode
-except NameError:
-    unicode = str  # NOQA
-
 
 test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
@@ -104,7 +88,7 @@ a: 45
     def test_dump_does_handles_numbers_and_booleans_correctly(self):
         test = [
             None,
-            OrderedDict([
+            dict([
                 (1, None),
                 (123.34, 'tha')
             ])
@@ -146,7 +130,7 @@ x: !!int 5
 that: *environ
 '''
         result = saneyaml.load(test)
-        expected = OrderedDict([
+        expected = dict([
             ('x', '5'),
             ('', ['this', 'null', '2012-03-12']),
             ('that', '')
@@ -157,13 +141,11 @@ that: *environ
 safe_chars = re.compile(r'[\W_]', re.MULTILINE)
 
 
-def python_safe(s, python2=False):
+def python_safe(s):
     """Return a name safe to use as a python function name"""
     s = s.strip().lower()
     s = [x for x in safe_chars.split(s) if x]
     s = '_'.join(s)
-    if saneyaml.python2:
-        s = s.encode('utf-8')
     return s
 
 
@@ -186,14 +168,13 @@ def get_yaml_test_method(test_file, expected_load_file, expected_dump_file, rege
                 out.write(test_dump)
 
         with io.open(expected_load_file, encoding='utf-8') as inp:
-            expected_load = json.load(inp, object_pairs_hook=OrderedDict)
+            expected_load = json.load(inp)
 
         with io.open(expected_dump_file, encoding='utf-8') as inp:
             expected_dump = inp.read()
 
         assert expected_load == test_load
         assert expected_dump == test_dump
-
 
     tfn = test_file.replace(test_data_dir, '').strip('/\\')
     test_name = 'test_{}'.format(tfn)

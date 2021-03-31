@@ -2,18 +2,15 @@ about_resource: .
 name: saneyaml
 
 description: |
+ Dump readable YAML and load safely any YAML preserving
+ ordering and avoiding surprises of type conversions.
+ his library is a PyYaml wrapper with sane behaviour to read and
+ write readable YAML safely, typically when used for configuration.
 
-homepage_url: http://www.nexb.com/community.html
+homepage_url: https://github.com/nexB/saneyaml
 
 license_expression: apache-2.0
-licenses:
-    - key: apache-2.0
-      name: Apache 2.0
-      file: apache-2.0.LICENSE
-
-copyright: Copyright (c) 2018 nexB Inc. and others
-
+copyright: Copyright (c) nexB Inc. and others
 notice_file: NOTICE
-
 vcs_tool: git
 vcs_repository: https://github.com/nexB/saneyaml.git

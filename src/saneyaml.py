@@ -1,26 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 #
-# Copyright (c) 2018 nexB Inc. and others. All rights reserved.
-# http://nexb.com and https://github.com/nexB/saneyaml/
+# Copyright (c) nexB Inc. and others. All rights reserved.
+# ScanCode is a trademark of nexB Inc.
+# SPDX-License-Identifier: Apache-2.0
+# See http://www.apache.org/licenses/LICENSE-2.0 for the license text.
+# See https://github.com/nexB/saneyaml/ for support or download.
+# See https://aboutcode.org for more information about nexB OSS projects.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#     http://www.apache.org/licenses/LICENSE-2.0
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
-from collections import OrderedDict
 from functools import partial
-import sys
+import re
 
 import yaml
 from yaml.error import YAMLError
@@ -33,25 +23,6 @@ try:  # pragma: nocover
     from yaml import CSafeLoader as SafeLoader
 except ImportError:  # pragma: nocover
     from yaml import SafeLoader
-
-try:  # pragma: nocover
-    # Python 2
-    unicode
-except NameError:  # pragma: nocover
-    # Python 3
-    unicode = str  # NOQA
-
-# Python 2 to 3.5
-python2 = sys.version_info[0] < 3
-python3old = sys.version_info[0] == 3 and sys.version_info[1] < 6
-OLD_PY = python2 or python3old
-
-if OLD_PY:  # pragma: nocover
-    from collections import OrderedDict as odict
-else:
-    # CPython 3.6 and up dict is ordered by default. And this is the Python spec
-    # in 3.7 and up.
-    odict = dict
 
 """
 A wrapper around PyYAML to provide sane defaults ensuring that dump/load does
@@ -71,10 +42,10 @@ versions and Python vs C/libyaml, the tests may behave differently in some cases
 and fail.
 """
 
-
 ###############################################################################
 # Loading
 ###############################################################################
+
 
 def load(s, allow_duplicate_keys=True):
     """
@@ -109,17 +80,18 @@ class BaseSaneLoader(SafeLoader):
     def ordered_loader(self, node, check_dupe=False):
         """
         Ensure that YAML maps order is preserved and loaded in an ordered mapping.
+        Legacy from the pre Python 3.6 times when dicts where not ordered.
         """
         assert isinstance(node, yaml.MappingNode)
-        omap = odict()
+        omap = dict()
         yield omap
         for key, value in node.value:
             key = self.construct_object(key)
             value = self.construct_object(value)
             if check_dupe and key in omap:
-                raise UnsupportedYamlFeatureError(
-                    'Duplicate key in YAML source: {}'.format(key))
+                raise UnsupportedYamlFeatureError('Duplicate key in YAML source: {}'.format(key))
             omap[key] = value
+
 
 # Load most types as strings : nulls, ints, (such as in version 01) floats (such
 # as version 2.20) and timestamps conversion (in versions too), booleans are all
@@ -127,7 +99,8 @@ class BaseSaneLoader(SafeLoader):
 # This avoid unwanted type conversions for unquoted strings and the resulting
 # content damaging. This overrides the implicit resolvers. Callers must handle
 # type conversion explicitly from unicode to other types in the loaded objects.
-
+# NOTE: we are still using the built-in loader for booleans. It will recognize
+# yes/no as a boolean.
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:str', BaseSaneLoader.string_loader)
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:null', BaseSaneLoader.string_loader)
 BaseSaneLoader.add_constructor('tag:yaml.org,2002:boolean', BaseSaneLoader.string_loader)
@@ -142,6 +115,7 @@ BaseSaneLoader.add_constructor(None, BaseSaneLoader.ordered_loader)
 
 class SaneLoader(BaseSaneLoader):
     pass
+
 
 # Always load mapping as ordered mappings
 SaneLoader.add_constructor('tag:yaml.org,2002:map', BaseSaneLoader.ordered_loader)
@@ -161,10 +135,12 @@ dupe_checkding_ordered_loader = partial(BaseSaneLoader.ordered_loader, check_dup
 DupeKeySaneLoader.add_constructor('tag:yaml.org,2002:map', dupe_checkding_ordered_loader)
 DupeKeySaneLoader.add_constructor('tag:yaml.org,2002:omap', dupe_checkding_ordered_loader)
 
-
 ###############################################################################
 # Dumping
 ###############################################################################
+
+WIDTH = 90
+
 
 def dump(obj, indent=2, encoding=None):
     """
@@ -187,7 +163,7 @@ def dump(obj, indent=2, encoding=None):
         # anything above 2 will yield weird vertical indents on lists and maps
         indent=indent,
         # make this 80ish
-        width=90,
+        width=WIDTH,
         # posix LF
         line_break='\n',
         # no --- and ...
@@ -197,30 +173,57 @@ def dump(obj, indent=2, encoding=None):
 
 
 class IndentingEmitter(Emitter):
+
     def increase_indent(self, flow=False, indentless=False):
         """
         Ensure that lists items are always indented.
         """
         return super(IndentingEmitter, self).increase_indent(
-            flow=False, indentless=False)
+            flow=False,
+            indentless=False,
+        )
 
 
 class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
 
     def __init__(self, stream,
-            default_style=None, default_flow_style=None,
-            canonical=None, indent=None, width=None,
-            allow_unicode=None, line_break=None,
-            encoding=None, explicit_start=None, explicit_end=None,
-            version=None, tags=None):
-        IndentingEmitter.__init__(self, stream, canonical=canonical,
-                indent=indent, width=width,
-                allow_unicode=allow_unicode, line_break=line_break)
-        Serializer.__init__(self, encoding=encoding,
-                explicit_start=explicit_start, explicit_end=explicit_end,
-                version=version, tags=tags)
-        SafeRepresenter.__init__(self, default_style=default_style,
-                default_flow_style=default_flow_style)
+        default_style=None,
+        default_flow_style=None,
+        canonical=None,
+        indent=None,
+        width=None,
+        allow_unicode=None,
+        line_break=None,
+        encoding=None,
+        explicit_start=None,
+        explicit_end=None,
+        version=None,
+        tags=None,
+        sort_keys=False,
+        **kwargs,
+    ):
+        IndentingEmitter.__init__(
+            self,
+            stream,
+            canonical=canonical,
+            indent=indent,
+            width=width,
+            allow_unicode=allow_unicode,
+            line_break=line_break,
+        )
+        Serializer.__init__(
+            self,
+            encoding=encoding,
+            explicit_start=explicit_start,
+            explicit_end=explicit_end,
+            version=version,
+            tags=tags,
+        )
+        SafeRepresenter.__init__(
+            self,
+            default_style=default_style,
+            default_flow_style=default_flow_style,
+        )
         Resolver.__init__(self)
 
     def determine_block_hints(self, text):
@@ -245,7 +248,7 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
         """
         Always dump nulls as empty string.
         """
-        return self.represent_scalar('tag:yaml.org,2002:null', '')
+        return self.represent_scalar('tag:yaml.org,2002:str', '', style=None)
 
     def string_dumper(self, value):
         """
@@ -254,20 +257,50 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
         """
         tag = 'tag:yaml.org,2002:str'
         style = None
+
+        if value is None:
+            return ''
+
+        if isinstance(value, bool):
+            value = 'yes' if value else 'no'
+            style = ''
+
         if isinstance(value, float):
             style = "'"
 
+        if isinstance(value, int):
+            value = str(value)
+            style = ''
+
         if isinstance(value, bytes):
             value = value.decode('utf-8')
-        elif not isinstance(value, unicode):
+        elif isinstance(value, int):
+            value = str(value)
+        elif not isinstance(value, str):
             value = repr(value)
 
         # do not quote integer strings
-        if value.isdigit() and unicode(int(value)) == value:
-            style = None
-            tag = 'tag:yaml.org,2002:int'
+        if value.isdigit():
+            if value.lstrip('0') == value:
+                style = ''
+            else:
+                # things such as 012 needs to be quoted
+                style = "'"
 
-        if '\n' in value:
+        # quote things that could be mistakenly loaded as date
+        if is_iso_date(value):
+            style = "'"
+
+        # quote things that could be mistakenly loaded as float such as version numbers
+        if value != '.' and len(value.split('.')) == 2 and all(c in '0123456789.' for c in value):
+            style = "'"
+
+        elif value == 'null':
+            style = "'"
+
+        # if '\n' in value or len(value) > WIDTH:
+            # literal_style for multilines or long
+        elif '\n' in value:
             # literal_style for multilines
             style = '|'
 
@@ -282,12 +315,27 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
         return self.represent_scalar('tag:yaml.org,2002:bool', value, style=None)
 
 
+def is_float(s):
+    """
+    Return True if this is a float with trailing zeroes such as `1.20`
+    """
+    try:
+        float(s)
+        return s.startswith('0') or s.endswith('0')
+    except:
+        return False
+
+
+# Return True if s is an iso date such as `2019-12-12`
+is_iso_date = re.compile(r'19|20[0-9]{2}-[0-1][0-9]-[0-3]?[1-9]').match
+
 SaneDumper.add_representer(int, SaneDumper.string_dumper)
-SaneDumper.add_representer(odict, SaneDumper.ordered_dumper)
-SaneDumper.add_representer(OrderedDict, SaneDumper.ordered_dumper)
+SaneDumper.add_representer(dict, SaneDumper.ordered_dumper)
 SaneDumper.add_representer(type(None), SaneDumper.null_dumper)
-SaneDumper.add_representer(bool, SaneDumper.boolean_dumper)
+SaneDumper.add_representer(bool, SaneDumper.string_dumper)
 SaneDumper.add_representer(bytes, SaneDumper.string_dumper)
 SaneDumper.add_representer(str, SaneDumper.string_dumper)
-SaneDumper.add_representer(unicode, SaneDumper.string_dumper)
 SaneDumper.add_representer(float, SaneDumper.string_dumper)
+
+SaneDumper.yaml_implicit_resolvers = {}
+SaneDumper.yaml_path_resolvers = {}
