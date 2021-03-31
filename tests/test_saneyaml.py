@@ -157,13 +157,11 @@ that: *environ
 safe_chars = re.compile(r'[\W_]', re.MULTILINE)
 
 
-def python_safe(s, python2=False):
+def python_safe(s):
     """Return a name safe to use as a python function name"""
     s = s.strip().lower()
     s = [x for x in safe_chars.split(s) if x]
     s = '_'.join(s)
-    if saneyaml.python2:
-        s = s.encode('utf-8')
     return s
 
 
