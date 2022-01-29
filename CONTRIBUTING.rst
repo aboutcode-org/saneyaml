@@ -48,11 +48,9 @@ For other questions, discussions, and chats, we have:
   Gitter also has an IRC bridge at https://irc.gitter.im/
   This is the main place where we chat and meet.
 
-- an official #aboutcode IRC channel on freenode (server chat.freenode.net)
+- an official #aboutcode IRC channel on Libera Chat (server web.libera.chat)
   for scancode and other related tools. You can use your
-  favorite IRC client or use the web chat at https://webchat.freenode.net/ .
-  This is a busy place with a lot of CI and commit notifications that makes
-  actual chat sometimes difficult!
+  favorite IRC client or use the web chat at https://web.libera.chat/?#aboutcode .
 
 - a mailing list at `sourceforge <https://lists.sourceforge.net/lists/listinfo/aboutcode-discuss>`_
 
