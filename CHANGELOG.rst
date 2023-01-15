@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v0.6 (2023-01-15)
+-----------------
+
+- Merge latest https://github.com/nexB/skeleton
+- Support PyYAML 5.x and 6.x and document in README
+  Thank you to @mwgamble
+
+
 v0.5 (2021-03-31)
 -----------------
 
