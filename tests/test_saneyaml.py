@@ -149,6 +149,9 @@ that: *environ
         assert not saneyaml.is_iso_date('1994-01-1')
         assert not saneyaml.is_iso_date('1994-1-1')
         assert not saneyaml.is_iso_date('193')
+        # Hey, nothing's perfect
+        assert saneyaml.is_iso_date('2003-02-29')
+        assert saneyaml.is_iso_date('2004-01-35')
 
 
 safe_chars = re.compile(r'[\W_]', re.MULTILINE)
