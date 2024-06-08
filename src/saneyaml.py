@@ -327,7 +327,7 @@ def is_float(s):
 
 
 # Return True if s is an iso date such as `2019-12-12`
-is_iso_date = re.compile(r'19|20[0-9]{2}-[0-1][0-9]-[0-3]?[1-9]').match
+is_iso_date = re.compile(r'(19|20)[0-9]{2}-[0-1][0-9]-[0-3][0-9]').match
 
 SaneDumper.add_representer(int, SaneDumper.string_dumper)
 SaneDumper.add_representer(dict, SaneDumper.ordered_dumper)
