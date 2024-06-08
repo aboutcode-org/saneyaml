@@ -137,6 +137,19 @@ that: *environ
         ])
         assert  expected == result
 
+    def test_is_iso_date(self):
+        assert saneyaml.is_iso_date('1994-01-01')
+        assert saneyaml.is_iso_date('2004-01-01')
+        assert not saneyaml.is_iso_date('1800-01-01')
+        assert not saneyaml.is_iso_date('2100-01-01')
+        assert saneyaml.is_iso_date('2004-01-30')
+        assert not saneyaml.is_iso_date('2004-01-40')
+        assert not saneyaml.is_iso_date('2004-01-4')
+        assert not saneyaml.is_iso_date('2004-01-3a')
+        assert not saneyaml.is_iso_date('1994-01-1')
+        assert not saneyaml.is_iso_date('1994-1-1')
+        assert not saneyaml.is_iso_date('193')
+
 
 safe_chars = re.compile(r'[\W_]', re.MULTILINE)
 
