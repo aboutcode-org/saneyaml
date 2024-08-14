@@ -7,10 +7,10 @@ description: |
  his library is a PyYaml wrapper with sane behaviour to read and
  write readable YAML safely, typically when used for configuration.
 
-homepage_url: https://github.com/nexB/saneyaml
+homepage_url: https://github.com/aboutcode-org/saneyaml
 
 license_expression: apache-2.0
 copyright: Copyright (c) nexB Inc. and others
 notice_file: NOTICE
 vcs_tool: git
-vcs_repository: https://github.com/nexB/saneyaml.git
+vcs_repository: https://github.com/aboutcode-org/saneyaml.git

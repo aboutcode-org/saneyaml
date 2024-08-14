@@ -5,15 +5,15 @@ Contributing
 Contributions are welcome and appreciated!
 Every little bit helps, and credit will always be given.
 
-.. _issue : https://github.com/nexB/saneyaml/issue
+.. _issue : https://github.com/aboutcode-org/saneyaml/issue
 __ issue_
 
 If you are new and want to find easy tickets to work on,
-check `easy issues <https://github.com/nexB/saneyaml/labels/easy>`_
+check `easy issues <https://github.com/aboutcode-org/saneyaml/labels/easy>`_
 
 When contributing to this project  (such as code, bugs, documentation, etc.) you
 agree to the Developer `Certificate of Origin <http://developercertificate.org/>`_
-and its license (see the `apache-2.0.LICENSE <https://github.com/nexB/saneyaml/blob/develop/apache-2.0.LICENSE>`_ file).
+and its license (see the `apache-2.0.LICENSE <https://github.com/aboutcode-org/saneyaml/blob/develop/apache-2.0.LICENSE>`_ file).
 The same approach is used by the Linux Kernel developers and several other projects.
 
 For commits, it is best to simply add a line like this to your commit message,
@@ -76,8 +76,8 @@ Documentation improvements
 ==========================
 
 Documentation can come in the form of wiki pages, docstrings, blog posts,
-articles, etc. Even a minor typo fix is welcomed. 
-See also extra documentation on the `Wiki <https://github.com/nexB/saneyaml/wiki>`_.
+articles, etc. Even a minor typo fix is welcomed.
+See also extra documentation on the `Wiki <https://github.com/aboutcode-org/saneyaml/wiki>`_.
 
 
 Pull Request Guidelines
@@ -89,7 +89,7 @@ create a pull request. You can add new commits to your branch as needed.
 For merging, your request would need to:
 
 1. Include unit tests that are passing (run ``py.test``).
-2. Update documentation as needed for new API, functionality etc. 
+2. Update documentation as needed for new API, functionality etc.
 3. Add a note to ``CHANGELOG.rst`` about the changes.
 4. Add your name to ``AUTHORS.rst``.
 

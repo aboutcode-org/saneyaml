@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v0.6.1 (2024-08-14)
+-------------------
+
+- Update link references of ownership from nexB to aboutcode-org
+
+
 v0.6 (2023-01-15)
 -----------------
 
