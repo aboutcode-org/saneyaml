@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ubuntu20_cpython:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: venv/bin/pytest -n 2 -vvs
+
+  ubuntu22_cpython:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: venv/bin/pytest -n 2 -vvs
+
+  macos12_cpython:
+    runs-on: macos-14
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: venv/bin/pytest -n 2 -vvs
+
+  win2019_cpython:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: venv\Scripts\pytest -n 2 -vvs
+
+  win2022_cpython:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: venv\Scripts\pytest -n 2 -vvs
