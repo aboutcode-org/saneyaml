@@ -281,7 +281,7 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
 
         # do not quote integer strings
         if value.isdigit():
-            if value.lstrip('0') == value:
+            if value == '0' or value.lstrip('0') == value:
                 style = ''
             else:
                 # things such as 012 needs to be quoted
