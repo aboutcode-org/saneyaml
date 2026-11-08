@@ -99,6 +99,19 @@ a: 45
             "  '123.34': tha\n")
         assert expected == saneyaml.dump(test)
 
+    def test_dump_does_not_quote_the_integer_zero(self):
+        test = {
+            'zero_int': 0,
+            'zero_str': '0',
+            # strings with leading zeroes must still be quoted to stay strings
+            'leading_zeroes': '00',
+        }
+        expected = (
+            "zero_int: 0\n"
+            "zero_str: 0\n"
+            "leading_zeroes: '00'\n")
+        assert expected == saneyaml.dump(test)
+
     def test_dump_increases_indents_correctly(self):
         test = {
         'a': [
