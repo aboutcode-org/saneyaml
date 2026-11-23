@@ -226,11 +226,6 @@ class SaneDumper(IndentingEmitter, Serializer, SafeRepresenter, Resolver):
         )
         Resolver.__init__(self)
 
-    def determine_block_hints(self, text):
-        """
-        Avoid extra hint in blocks such as `|-` for literals.
-        """
-        return ''
 
     def ignore_aliases(self, data):
         """
