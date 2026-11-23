@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.6.2 (unreleased)
+-------------------
+
+- Remove non-license files from license_files in setup.cfg
+
+
 v0.6.1 (2024-08-14)
 -------------------
 
